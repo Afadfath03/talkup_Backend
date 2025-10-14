@@ -16,31 +16,7 @@ const createExample = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error.name);
-
-    if (error.name === "SequelizeValidationError") {
-      const errorMessage = error.errors.map((err) => err.message);
-      return res.status(400).json({
-        status: "Failed",
-        message: errorMessage[0],
-        isSuccess: false,
-        data: null,
-      });
-    } else if (error.name === "SequelizeDatabaseError") {
-      return res.status(400).json({
-        status: "Failed",
-        message: error.message || "Database error",
-        isSuccess: false,
-        data: null,
-      });
-    }
-
-    res.status(500).json({
-      status: "Failed",
-      message: "An unexpected error occurred",
-      isSuccess: false,
-      data: null,
-    });
+    next(error);
   }
 };
 
@@ -75,13 +51,7 @@ const getAllExample = async (req, res) => {
       },
     });
   } catch (error) {
-    console.log(error.name);
-    res.status(500).json({
-      status: "Failed",
-      message: error.message,
-      isSuccess: false,
-      data: null,
-    });
+    next(error);
   }
 };
 
@@ -107,13 +77,7 @@ const getExampleById = async (req, res) => {
       data: { example },
     });
   } catch (error) {
-    console.log(error.name);
-    res.status(500).json({
-      status: "Failed",
-      message: error.message,
-      isSuccess: false,
-      data: null,
-    });
+    next(error);
   }
 };
 
@@ -142,13 +106,7 @@ const updateExample = async (req, res) => {
       data: { id, name, description },
     });
   } catch (error) {
-    console.log(error.name);
-    res.status(500).json({
-      status: "Failed",
-      message: error.message,
-      isSuccess: false,
-      data: null,
-    });
+    next(error);
   }
 };
 
@@ -176,13 +134,7 @@ const deleteExample = async (req, res) => {
       data: null,
     });
   } catch (error) {
-    console.log(error.name);
-    res.status(500).json({
-      status: "Failed",
-      message: error.message,
-      isSuccess: false,
-      data: null,
-    });
+    next(error);
   }
 };
 
