@@ -5,7 +5,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const router = require("./routes");
 const docsRouter = require("./routes/documentationRouter");
-const errorHandling = require("./middleware/errorHandling");
+const errorHandling = require("./middlewares/errorHandling");
 
 const { systemController } = require("./controllers");
 const { sequelize } = require("./models");
