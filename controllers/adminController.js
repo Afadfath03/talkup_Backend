@@ -1,42 +1,75 @@
 const { users, guru_bk, siswa } = require("../models");
 const bcrypt = require("bcryptjs");
 
-// 🧩 Tambah Guru BK
-exports.addGuruBk = async (req, res) => {
+const addGuruBk = async (req, res, next) => {
   try {
-    const { nama, jabatan, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const guru = await guru_bk.create({ nama, jabatan });
-    const newUser = await users.create({
-      id_ref: guru.id_guru_bk,
-      role: "guru_bk",
-      email,
-      password: hashedPassword,
-    });
-    res
-      .status(201)
-      .json({ message: "Guru BK berhasil ditambahkan", user: newUser });
-  } catch (error) {
-    next(error);
-  }
-};
+    const { nama, email, jabatan, password } = req.body;
 
-// 🧩 Tambah Siswa
-exports.addSiswa = async (req, res) => {
-  try {
-    const { email_sekolah, nama_lengkap, kelas, email, password, guruBkId } =
-      req.body;
-
-    // ✅ Cek apakah email sudah terdaftar
     const existingUser = await users.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ message: "Email sudah terdaftar" });
     }
 
-    // ✅ Hash password
+    const newGuruBk = await guru_bk.create({
+      nama,
+      jabatan,
+    });
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // ✅ Buat data siswa
+    const newUser = await users.create({
+      id_ref: newGuruBk.id,
+      role: "guru_bk",
+      email,
+      password: hashedPassword,
+    });
+
+    res.status(201).json({
+      message: "Guru BK berhasil ditambahkan",
+      guru_bk: newGuruBk,
+      user: newUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const addSiswa = async (req, res, next) => {
+  try {
+    const { email_sekolah, nama_lengkap, kelas, email, password, guruBkId } =
+      req.body;
+
+    if (
+      !email_sekolah ||
+      !nama_lengkap ||
+      !kelas ||
+      !email ||
+      !password ||
+      !guruBkId
+    ) {
+      return res.status(400).json({
+        status: "Failed",
+        message: "Semua field wajib diisi",
+      });
+    }
+
+    const existingUser = await users.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({
+        status: "Failed",
+        message: "Email sudah terdaftar",
+      });
+    }
+
+    const guruBkExist = await guru_bk.findByPk(guruBkId);
+    if (!guruBkExist) {
+      return res.status(404).json({
+        status: "Failed",
+        message: "Guru BK dengan ID tersebut tidak ditemukan",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newSiswa = await siswa.create({
       email_sekolah,
       nama_lengkap,
@@ -44,16 +77,15 @@ exports.addSiswa = async (req, res) => {
       guruBkId,
     });
 
-    // ✅ Buat user login untuk siswa
     const newUser = await users.create({
-      id_ref: newSiswa.id,
-      role: "siswa",
+      id_ref: newSiswa.id_siswa,
       email,
       password: hashedPassword,
     });
 
     res.status(201).json({
-      message: "✅ Siswa berhasil ditambahkan oleh Super Admin",
+      status: "Success",
+      message: "Siswa berhasil ditambahkan oleh Super Admin",
       data: {
         siswa: newSiswa,
         akun: {
@@ -64,16 +96,22 @@ exports.addSiswa = async (req, res) => {
       },
     });
   } catch (error) {
+    console.error(error);
     next(error);
   }
 };
 
-// 🧩 Lihat Semua User
-exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
     const data = await users.findAll();
     res.json({ total: data.length, data });
   } catch (error) {
     next(error);
   }
+};
+
+module.exports = {
+  addGuruBk,
+  addSiswa,
+  getAllUsers,
 };

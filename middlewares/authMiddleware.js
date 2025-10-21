@@ -1,4 +1,3 @@
-// middlewares/authMiddleware.js
 const jwt = require("jsonwebtoken");
 
 exports.verifyToken = (req, res, next) => {
@@ -12,9 +11,7 @@ exports.verifyToken = (req, res, next) => {
   });
 };
 
-// ✅ gunakan nama verifyRole agar konsisten di semua router
 exports.verifyRole = (roles = []) => {
-  // otomatis ubah string menjadi array agar bisa pakai "guru_bk" atau ["guru_bk"]
   if (typeof roles === "string") roles = [roles];
 
   return (req, res, next) => {

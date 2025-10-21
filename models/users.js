@@ -3,14 +3,12 @@ const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class users extends Model {
     static associate(models) {
-      // User bisa punya relasi ke Siswa
       users.belongsTo(models.siswa, {
         foreignKey: "id_ref",
         constraints: false,
         as: "siswa",
       });
 
-      // User bisa punya relasi ke GuruBK
       users.belongsTo(models.guru_bk, {
         foreignKey: "id_ref",
         constraints: false,
