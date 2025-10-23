@@ -9,7 +9,7 @@ const doc = {
   },
   host: "localhost:3000",
   schemes: ["http"],
-  basePath: "/",
+  basePath: "/api/v1",
   swagger: "2.0",
   securityDefinitions: {
     bearerAuth: {
