@@ -4,12 +4,26 @@ const createDiskusi = async (req, res, next) => {
   try {
     const { judul, konten, is_anonim } = req.body;
     
-    // Get user ID from token
-    const userId = req.user?.id_user;
+    const ref_id = req.user?.id_ref;
+    if (!ref_id) {
+      return res.status(401).json({
+        status: "Failed",
+        message: "Token tidak valid",
+        isSuccess: false,
+        data: null
+      });
+    }
+    // Get user ID from users table based on id_ref
+    const user = await UsersModel.findOne({
+      where: { id_ref: ref_id }
+    });
+    
+    const userId = user?.id;
+
     if (!userId) {
       return res.status(401).json({
         status: "Failed",
-        message: "Token tidak valid atau user ID tidak ditemukan",
+        message: "user ID tidak ditemukan",
         isSuccess: false,
         data: null
       });
@@ -47,7 +61,7 @@ const getAllDiskusi = async (req, res, next) => {
     const { count, rows: list } = await DiskusiModel.findAndCountAll({
       offset,
       limit,
-      order: [['tgl_post', 'DESC']],
+      order: [['id_diskusi', 'ASC']],
       include: [
         {
           model: UsersModel,
@@ -114,6 +128,7 @@ const getDiskusiById = async (req, res, next) => {
     const { id } = req.params;
     const found = await DiskusiModel.findOne({
       where: { id_diskusi: id },
+      order: [['id_diskusi', 'ASC']],
       include: [{
         model: UsersModel,
         as: 'pembuat',

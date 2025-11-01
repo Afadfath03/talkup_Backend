@@ -13,6 +13,22 @@ router.post(
   "/",
   verifyToken,
   verifyRole(["guru_bk", "siswa"]),
+  [
+    body("judul")
+      .notEmpty()
+      .withMessage("Judul wajib diisi")
+      .isLength({ max: 255 })
+      .withMessage("Judul maksimal 255 karakter"),
+    body("konten")
+      .notEmpty()
+      .withMessage("Konten wajib diisi")
+      .isLength({ min: 10 })
+      .withMessage("Konten minimal 10 karakter"),
+    body("is_anonim")
+      .optional()
+      .isBoolean()
+      .withMessage("Is_anonim harus berupa boolean (true/false)")
+  ],
   validationMiddleware,
   createDiskusi
   /*
@@ -63,3 +79,4 @@ router.get(
 );
 
 module.exports = router;
+
