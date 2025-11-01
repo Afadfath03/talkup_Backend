@@ -50,6 +50,10 @@ const doc = {
       description: "Fitur forum diskusi",
     },
     {
+      name: "Konseling",
+      description: "Fitur permintaan konseling oleh siswa",
+    },
+    {
       name: "Diskusi Balasan",
       description: "Fitur balasan diskusi",
     },

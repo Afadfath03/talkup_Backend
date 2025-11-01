@@ -20,11 +20,11 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      topik: {
+      judul: {
         type: Sequelize.STRING(255),
         allowNull: false
       },
-      isi_diskusi: {
+      konten: {
         type: Sequelize.TEXT,
         allowNull: false
       },
