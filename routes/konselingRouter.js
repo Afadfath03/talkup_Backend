@@ -27,7 +27,7 @@ router.post(
   validationMiddleware,
   /*
   #swagger.tags = ['Konseling']
-  #swagger.summary = 'Buat permintaan konseling'
+  #swagger.summary = 'Siswa Buat permintaan konseling'
   #swagger.description = 'Endpoint untuk siswa membuat permintaan konseling.'
   #swagger.security = [{ "bearerAuth": [] }]
   #swagger.parameters['body'] = {
@@ -50,7 +50,7 @@ router.get(
   verifyRole("guru_bk"),
   /*
   #swagger.tags = ['Konseling']
-  #swagger.summary = 'Get daftar pengajuan konseling untuk Guru BK'
+  #swagger.summary = 'Tampilkan daftar pengajuan konseling untuk Guru BK'
   #swagger.description = 'Endpoint untuk Guru BK melihat daftar pengajuan konseling dari siswa bimbingannya.'
   #swagger.security = [{ "bearerAuth": [] }]
   #swagger.parameters['id_guru_bk'] = {
@@ -77,7 +77,7 @@ router.put(
   validationMiddleware,
   /*
   #swagger.tags = ['Konseling']
-  #swagger.summary = 'Update status konseling'
+  #swagger.summary = 'Update status konseling oleh Guru BK'
   #swagger.description = 'Endpoint untuk Guru BK mengubah persetujuan pengajuan konseling. Jika disetujui, akan otomatis membuat entry di tabel detail_konseling.'
   #swagger.security = [{ "bearerAuth": [] }]
   #swagger.parameters['id'] = {

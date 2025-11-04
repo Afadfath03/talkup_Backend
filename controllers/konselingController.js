@@ -48,11 +48,11 @@ const createKonseling = async (req, res, next) => {
 const getKonselingByGuruBk = async (req, res, next) => {
   try {
     const { id_guru_bk } = req.params;
-    
-    // Verifikasi bahwa guru BK yang login hanya bisa melihat data siswa bimbingannya sendiri
-    if (req.user.role === 'guru_bk' && req.user.id_ref != id_guru_bk) {
+
+    if (req.user.role === "guru_bk" && req.user.id_ref != id_guru_bk) {
       return res.status(403).json({
-        message: "Akses ditolak. Anda hanya dapat melihat pengajuan dari siswa bimbingan Anda.",
+        message:
+          "Akses ditolak. Anda hanya dapat melihat pengajuan dari siswa bimbingan Anda.",
       });
     }
 
@@ -104,9 +104,13 @@ const updateStatusKonseling = async (req, res, next) => {
       });
     }
 
-    if (req.user.role === 'guru_bk' && req.user.id_ref != konseling.id_guru_bk) {
+    if (
+      req.user.role === "guru_bk" &&
+      req.user.id_ref != konseling.id_guru_bk
+    ) {
       return res.status(403).json({
-        message: "Akses ditolak. Anda hanya dapat memproses pengajuan dari siswa bimbingan Anda.",
+        message:
+          "Akses ditolak. Anda hanya dapat memproses pengajuan dari siswa bimbingan Anda.",
       });
     }
 
@@ -114,7 +118,7 @@ const updateStatusKonseling = async (req, res, next) => {
     await konseling.save();
 
     let detailKonseling = null;
-    
+
     if (status === "Disetujui") {
       detailKonseling = await DetailKonseling.findOne({
         where: { id_konseling: id },

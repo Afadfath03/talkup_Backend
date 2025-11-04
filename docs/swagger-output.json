@@ -705,7 +705,7 @@
         "tags": [
           "Konseling"
         ],
-        "summary": "Buat permintaan konseling",
+        "summary": "Siswa Buat permintaan konseling",
         "description": "Endpoint untuk siswa membuat permintaan konseling.",
         "parameters": [
           {
@@ -761,7 +761,7 @@
         "tags": [
           "Konseling"
         ],
-        "summary": "Get daftar pengajuan konseling untuk Guru BK",
+        "summary": "Tampilkan daftar pengajuan konseling untuk Guru BK",
         "description": "Endpoint untuk Guru BK melihat daftar pengajuan konseling dari siswa bimbingannya.",
         "parameters": [
           {
@@ -795,7 +795,7 @@
         "tags": [
           "Konseling"
         ],
-        "summary": "Update status konseling",
+        "summary": "Update status konseling oleh Guru BK",
         "description": "Endpoint untuk Guru BK mengubah persetujuan pengajuan konseling. Jika disetujui, akan otomatis membuat entry di tabel detail_konseling.",
         "parameters": [
           {
