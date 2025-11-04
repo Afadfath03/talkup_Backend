@@ -133,7 +133,6 @@ const updateStatusKonseling = async (req, res, next) => {
       });
 
       if (!detailKonseling) {
-        // kalau belum ada, buat baru
         detailKonseling = await DetailKonseling.create({
           id_konseling: id,
           tgl_sesi,
@@ -143,7 +142,6 @@ const updateStatusKonseling = async (req, res, next) => {
           catatan_guru_bk,
         });
       } else {
-        // kalau sudah ada, update data
         await detailKonseling.update({
           tgl_sesi,
           jam_sesi,
