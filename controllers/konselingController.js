@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const { siswa, guru_bk, Konseling, DetailKonseling } = require("../models");
 const notificationService = require("../services/notificationService");
 
@@ -223,7 +224,13 @@ const getRiwayatKonseling = async (req, res, next) => {
           ],
         },
       ],
-      attributes: ["id", "tgl_pengajuan", "topik_konseling", "deskripsi_masalah", "status"],
+      attributes: [
+        "id",
+        "tgl_pengajuan",
+        "topik_konseling",
+        "deskripsi_masalah",
+        "status",
+      ],
       order: [["id", "DESC"]],
       limit,
       offset,
@@ -233,8 +240,9 @@ const getRiwayatKonseling = async (req, res, next) => {
     const totalPages = Math.ceil(count / limit);
 
     // Additional deduplication at application level
-    const uniqueKonselingData = konselingData.filter((konseling, index, self) =>
-      index === self.findIndex((k) => k.id === konseling.id)
+    const uniqueKonselingData = konselingData.filter(
+      (konseling, index, self) =>
+        index === self.findIndex((k) => k.id === konseling.id)
     );
 
     const formattedData = uniqueKonselingData.map((konseling) => ({
@@ -267,7 +275,7 @@ const getRiwayatKonseling = async (req, res, next) => {
 const getDetailKonseling = async (req, res, next) => {
   try {
     const { id_konseling } = req.params;
-    
+
     const konseling = await Konseling.findOne({
       where: { id: id_konseling },
       include: [
@@ -300,14 +308,19 @@ const getDetailKonseling = async (req, res, next) => {
     if (req.user.role === "siswa" && req.user.id_ref !== konseling.id_siswa) {
       return res.status(403).json({
         status: "Error",
-        message: "Akses ditolak. Anda hanya dapat melihat pengajuan konseling milik Anda sendiri.",
+        message:
+          "Akses ditolak. Anda hanya dapat melihat pengajuan konseling milik Anda sendiri.",
       });
     }
 
-    if (req.user.role === "guru_bk" && req.user.id_ref !== konseling.id_guru_bk) {
+    if (
+      req.user.role === "guru_bk" &&
+      req.user.id_ref !== konseling.id_guru_bk
+    ) {
       return res.status(403).json({
         status: "Error",
-        message: "Akses ditolak. Anda hanya dapat melihat pengajuan dari siswa bimbingan Anda.",
+        message:
+          "Akses ditolak. Anda hanya dapat melihat pengajuan dari siswa bimbingan Anda.",
       });
     }
 
@@ -332,23 +345,27 @@ const getDetailKonseling = async (req, res, next) => {
     if (konseling.status === "Disetujui" || konseling.status === "Selesai") {
       if (konseling.detail_konseling) {
         const detail = konseling.detail_konseling;
-        
+
         // Parse jam_sesi to get waktu_mulai and waktu_selesai
         let waktu_mulai = null;
         let waktu_selesai = null;
-        
+
         if (detail.jam_sesi) {
           const timeParts = detail.jam_sesi.split("-");
           waktu_mulai = timeParts[0] ? timeParts[0].trim() : null;
           waktu_selesai = timeParts[1] ? timeParts[1].trim() : null;
         }
-        
+
         responseData.detail_konseling = {
           tgl_konseling: detail.tgl_sesi,
           waktu_mulai,
           waktu_selesai,
-          jenis_sesi_final: detail.link_atau_ruang?.includes("http") ? "Online" : "Tatap Muka",
-          link_sesi: detail.link_atau_ruang?.includes("http") ? detail.link_atau_ruang : null,
+          jenis_sesi_final: detail.link_atau_ruang?.includes("http")
+            ? "Online"
+            : "Tatap Muka",
+          link_sesi: detail.link_atau_ruang?.includes("http")
+            ? detail.link_atau_ruang
+            : null,
           deskripsi_jadwal: detail.balasan_untuk_siswa,
         };
       }
@@ -356,8 +373,10 @@ const getDetailKonseling = async (req, res, next) => {
 
     // Add hasil_konseling and catatan_guru_bk if status is "Selesai"
     if (konseling.status === "Selesai" && konseling.detail_konseling) {
-      responseData.detail_konseling.hasil_konseling = konseling.detail_konseling.hasil_konseling;
-      responseData.detail_konseling.catatan_guru_bk = konseling.detail_konseling.catatan_guru_bk;
+      responseData.detail_konseling.hasil_konseling =
+        konseling.detail_konseling.hasil_konseling;
+      responseData.detail_konseling.catatan_guru_bk =
+        konseling.detail_konseling.catatan_guru_bk;
     }
 
     res.status(200).json({
@@ -370,10 +389,58 @@ const getDetailKonseling = async (req, res, next) => {
   }
 };
 
+const getJadwalKonseling = async (req, res, next) => {
+  try {
+    const jadwal = await Konseling.findAll({
+      where: { status: "Disetujui" },
+      include: [
+        {
+          model: DetailKonseling,
+          as: "detail_konseling",
+          where: {
+            tgl_sesi: { [Op.gt]: new Date() }, // ✅ pakai nama field yang benar
+          },
+          attributes: [
+            "tgl_sesi",
+            "jam_sesi",
+            "link_atau_ruang",
+            "balasan_untuk_siswa",
+            "catatan_guru_bk",
+          ],
+        },
+        {
+          model: siswa,
+          as: "siswa",
+          attributes: ["nama_lengkap", "kelas"],
+        },
+      ],
+      order: [
+        [{ model: DetailKonseling, as: "detail_konseling" }, "tgl_sesi", "ASC"],
+      ],
+    });
+
+    if (!jadwal.length) {
+      return res.status(404).json({
+        status: "Not Found",
+        message: "Tidak ada jadwal konseling mendatang yang ditemukan",
+      });
+    }
+
+    res.status(200).json({
+      status: "Success",
+      message: "Daftar jadwal konseling mendatang berhasil diambil",
+      data: jadwal,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createKonseling,
   getKonselingByGuruBk,
   updateStatusKonseling,
   getRiwayatKonseling,
   getDetailKonseling,
+  getJadwalKonseling,
 };
