@@ -27,11 +27,6 @@ const createKonseling = async (req, res, next) => {
       deskripsi_masalah,
     });
 
-    const msgKonseling = {
-      id_konseling: newKonseling.id,
-      status: newKonseling.status,
-    };
-
     res.status(201).json({
       status: "Success",
       message: "Pengajuan konseling berhasil dibuat",
