@@ -23,7 +23,6 @@ const createBalasan = async (req, res, next) => {
         data: null
       });
     }
-    // Get user ID from users table based on id_ref
     const user = await UsersModel.findOne({
       where: { id_ref: ref_id }
     });
@@ -45,12 +44,10 @@ const createBalasan = async (req, res, next) => {
       is_anonim: !!is_anonim
     });
 
-    // Update the reply count in the diskusi table
     await DiskusiModel.increment('jumlah_balasan', {
       where: { id_diskusi }
     });
 
-    // Get the created reply with user details
     const createdBalasan = await DiskusiBalasanModel.findOne({ where: { id_balasan: newBalasan.id_balasan } }, {
       include: [
         {
@@ -65,10 +62,8 @@ const createBalasan = async (req, res, next) => {
       ]
     });
 
-    // Transform the response to handle anonymity
     const response = createdBalasan.toJSON();
     if (response.user) {
-      // Prepare user object
       response.user = {
         id_user: response.user.id_user || response.user.id || null,
         id_ref: response.user.id_ref || null,
@@ -76,7 +71,6 @@ const createBalasan = async (req, res, next) => {
         email: response.user.email || null
       };
 
-      // Attach user details based on role
       if (createdBalasan.user.role === 'siswa' && createdBalasan.user.siswa) {
         response.user_detail = {
           id: createdBalasan.user.siswa.id || null,
@@ -94,10 +88,9 @@ const createBalasan = async (req, res, next) => {
       }
     }
 
-    // Handle anonymity
     if (response.is_anonim) {
-      response.user = 'Pengguna anonim';
-      response.user_detail = 'Pengguna anonim';
+      response.user = 'Anonim';
+      response.user_detail = 'Anonim';
     }
 
     return res.status(201).json(response);
@@ -110,18 +103,15 @@ const getBalasanByDiskusiId = async (req, res, next) => {
   try {
     const { diskusiId: id_diskusi } = req.params;
     
-    // Check if the discussion exists
     const diskusi = await DiskusiModel.findOne({ where: { id_diskusi } });
     if (!diskusi) {
       return res.status(404).json({ message: 'Diskusi tidak ditemukan' });
     }
 
-    // Get pagination parameters
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 25));
     const offset = (page - 1) * limit;
 
-    // Get total count of replies for this discussion
     const totalData = await DiskusiBalasanModel.count({
       where: { id_diskusi }
     });
@@ -145,12 +135,10 @@ const getBalasanByDiskusiId = async (req, res, next) => {
       ]
     });
 
-    // Transform the response to handle anonymity
     const data = list.map((balasan) => {
       const obj = balasan.toJSON();
       
       if (obj.user) {
-        // Prepare user object
         obj.user = {
           id: obj.user.id || null,
           id_ref: obj.user.id_ref || null,
@@ -158,7 +146,6 @@ const getBalasanByDiskusiId = async (req, res, next) => {
           email: obj.user.email || null
         };
 
-        // Attach user details based on role
         if (balasan.user.role === 'siswa' && balasan.user.siswa) {
           obj.user_detail = {
             id: balasan.user.siswa.id || null,
@@ -176,10 +163,9 @@ const getBalasanByDiskusiId = async (req, res, next) => {
         }
       }
 
-      // Handle anonymity
       if (obj.is_anonim) {
-        obj.user = 'Pengguna anonim';
-        obj.user_detail = 'Pengguna anonim';
+        obj.user = 'Anonim';
+        obj.user_detail = 'Anonim';
       }
 
       return obj;
