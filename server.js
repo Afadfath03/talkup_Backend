@@ -8,6 +8,7 @@ const cors = require("cors");
 const router = require("./routes");
 const docsRouter = require("./routes/documentationRouter");
 const errorHandling = require("./middlewares/errorHandling");
+const dynamicSwaggerHost = require("./middlewares/dynamicSwagger");
 
 const { systemController } = require("./controllers");
 const { sequelize } = require("./models");
@@ -29,7 +30,11 @@ sequelize
 
 app.get("/api/v1/health-check", systemController.healtcheck);
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+// Dynamic Swagger middleware
+app.use("/api-docs", dynamicSwaggerHost);
+app.use("/api-docs", swaggerUi.serve, (req, res, next) => {
+  swaggerUi.setup(req.swaggerFile)(req, res, next);
+});
 
 app.use("/api/v1", router);
 
