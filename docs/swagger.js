@@ -1,5 +1,12 @@
 const swaggerAutogen = require("swagger-autogen")({ autoHeaders: false });
 
+// Determine host based on environment
+const isProduction = process.env.NODE_ENV === "production";
+const host = isProduction 
+  ? process.env.SWAGGER_HOST || "api.example.com"
+  : "localhost:3000";
+const schemes = isProduction ? ["https", "http"] : ["http"];
+
 const doc = {
   info: {
     title: "TalkUp API Documentation",
@@ -7,8 +14,8 @@ const doc = {
       "Dokumentasi otomatis API TalkUp (Super Admin, Guru BK, dan Siswa).",
     version: "1.0.0",
   },
-  host: "localhost:3000",
-  schemes: ["http"],
+  host: host,
+  schemes: schemes,
   basePath: "/api/v1",
   swagger: "2.0",
   securityDefinitions: {
