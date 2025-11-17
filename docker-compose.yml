@@ -42,6 +42,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-postgres123}
       DB_NAME: ${DB_NAME:-talkup_db}
       JWT_SECRET: ${JWT_SECRET:-your-secret-key-change-this-in-production}
+      SWAGGER_HOST: ${SWAGGER_HOST:-localhost:3000}
     depends_on:
       postgres:
         condition: service_healthy
@@ -53,7 +54,6 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    command: npm start
 
   nginx:
     image: nginx:alpine

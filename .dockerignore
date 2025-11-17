@@ -12,3 +12,4 @@ build
 .vscode
 .idea
 *.log
+AZURE_PUBLIK_ACCESS.md
