@@ -114,6 +114,33 @@ router.get(
 );
 
 router.get(
+  "/riwayat/siswa",
+  verifyToken,
+  verifyRole("siswa"),
+  /*
+  #swagger.tags = ['Konseling']
+  #swagger.summary = 'Riwayat Konseling Siswa (Semua Status)'
+  #swagger.description = `
+    Mengambil seluruh riwayat pengajuan konseling milik siswa.<br><br>
+
+    Status yang ditampilkan:<br>
+    • <b>Menunggu</b><br>
+    • <b>Disetujui</b><br>
+    • <b>Selesai</b><br><br>
+
+    Catatan:<br>
+    • Endpoint ini hanya dapat diakses oleh siswa.<br>
+    • Tidak ada filter bulan/tahun, karena menampilkan semua status.
+  `
+  #swagger.security = [{ "bearerAuth": [] }]
+  #swagger.responses[200] = { 
+    description: 'Data riwayat konseling siswa berhasil diambil'
+  }
+  */
+  konselingController.getRiwayatKonselingSiswa
+);
+
+router.get(
   "/guru/:id_guru_bk",
   verifyToken,
   verifyRole("guru_bk"),
