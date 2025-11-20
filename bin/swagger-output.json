@@ -925,7 +925,7 @@
           "Konseling"
         ],
         "summary": "Daftar Jadwal Konseling Mendatang (Guru BK)",
-        "description": "  Endpoint ini digunakan oleh Guru BK untuk melihat daftar lengkap jadwal konseling  yang telah disetujui dan memiliki tanggal sesi di masa depan (tgl_konseling > NOW).  Data ini digunakan pada halaman \"Jadwal Konseling\" di frontend Guru BK.  ",
+        "description": "\r  Endpoint ini digunakan oleh Guru BK untuk melihat daftar lengkap jadwal konseling\r  yang telah disetujui dan memiliki tanggal sesi di masa depan (tgl_konseling > NOW).\r  Data ini digunakan pada halaman \"Jadwal Konseling\" di frontend Guru BK.\r  ",
         "responses": {
           "200": {
             "description": "Daftar jadwal konseling mendatang berhasil diambil.",
@@ -1027,7 +1027,7 @@
           "Konseling"
         ],
         "summary": "Riwayat Konseling",
-        "description": "  Mengambil seluruh konseling berstatus <b>Selesai</b>.<br>  • Siswa: hanya melihat riwayat miliknya.<br>  • Guru BK: hanya melihat riwayat bimbingan.<br><br>  Dapat difilter berdasarkan bulan, tahun, dan topik.  ",
+        "description": "\r  Mengambil seluruh konseling berstatus <b>Selesai</b>.<br>\r  • Siswa: hanya melihat riwayat miliknya.<br>\r  • Guru BK: hanya melihat riwayat bimbingan.<br><br>\r  Dapat difilter berdasarkan bulan, tahun, dan topik.\r  ",
         "parameters": [
           {
             "name": "month",
@@ -1078,13 +1078,38 @@
         ]
       }
     },
+    "/konseling/riwayat/siswa": {
+      "get": {
+        "tags": [
+          "Konseling"
+        ],
+        "summary": "Riwayat Konseling Siswa (Semua Status)",
+        "description": "\r  Mengambil seluruh riwayat pengajuan konseling milik siswa.<br><br>\r \r  Status yang ditampilkan:<br>\r  • <b>Menunggu</b><br>\r  • <b>Disetujui</b><br>\r  • <b>Selesai</b><br><br>\r \r  Catatan:<br>\r  • Endpoint ini hanya dapat diakses oleh siswa.<br>\r  • Tidak ada filter bulan/tahun, karena menampilkan semua status.\r  ",
+        "responses": {
+          "200": {
+            "description": "Data riwayat konseling siswa berhasil diambil"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/konseling/guru/{id_guru_bk}": {
       "get": {
         "tags": [
           "Konseling"
         ],
         "summary": "Daftar Pengajuan Konseling Siswa",
-        "description": "  Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling   dari siswa bimbingannya yang masih berstatus \"Menunggu\".  Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.  ",
+        "description": "\r  Endpoint ini digunakan oleh Guru BK untuk melihat daftar pengajuan konseling \r  dari siswa bimbingannya yang masih berstatus \"Menunggu\".\r  Setiap data mencakup informasi siswa dan deskripsi masalah yang diajukan.\r  ",
         "parameters": [
           {
             "name": "id_guru_bk",
@@ -1386,7 +1411,7 @@
           "Konseling"
         ],
         "summary": "Guru BK Menyelesaikan Sesi Konseling",
-        "description": "  Endpoint ini digunakan oleh Guru BK untuk menandai sesi konseling sebagai \"Selesai\".<br>  Hanya konseling yang sudah berstatus <b>Disetujui</b> yang dapat diselesaikan.<br><br>  Endpoint ini juga menyimpan hasil konseling, catatan guru BK, catatan siswa,  dan otomatis menambahkan tanggal selesai.  ",
+        "description": "\r  Endpoint ini digunakan oleh Guru BK untuk menandai sesi konseling sebagai \"Selesai\".<br>\r  Hanya konseling yang sudah berstatus <b>Disetujui</b> yang dapat diselesaikan.<br><br>\r  Endpoint ini juga menyimpan hasil konseling, catatan guru BK, catatan siswa,\r  dan otomatis menambahkan tanggal selesai.\r  ",
         "parameters": [
           {
             "name": "id",
